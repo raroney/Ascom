@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._txtScript = new System.Windows.Forms.TextBox();
             this._btnScript = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,6 +40,8 @@
             this._lblLevel = new System.Windows.Forms.Label();
             this._txtTime = new System.Windows.Forms.TextBox();
             this._cmbLogLevel = new System.Windows.Forms.ComboBox();
+            this._scriptThread = new System.ComponentModel.BackgroundWorker();
+            this._timer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // _txtScript
@@ -158,6 +161,17 @@
             this._cmbLogLevel.Size = new System.Drawing.Size(225, 33);
             this._cmbLogLevel.TabIndex = 3;
             // 
+            // _scriptThread
+            // 
+            this._scriptThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.RunScript);
+            this._scriptThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ScriptFinished);
+            // 
+            // _timer
+            // 
+            this._timer.Enabled = true;
+            this._timer.Interval = 1000;
+            this._timer.Tick += new System.EventHandler(this.UpdateTimer);
+            // 
             // Simulator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -195,6 +209,8 @@
         private System.Windows.Forms.Label _lblLevel;
         private System.Windows.Forms.TextBox _txtTime;
         private System.Windows.Forms.ComboBox _cmbLogLevel;
+        private System.ComponentModel.BackgroundWorker _scriptThread;
+        private System.Windows.Forms.Timer _timer;
     }
 }
 

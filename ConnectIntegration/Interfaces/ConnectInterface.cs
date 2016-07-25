@@ -42,7 +42,6 @@ namespace AscomIntegration
         public abstract void Send(ConnectMessage message);
         protected abstract void Connect();
         protected abstract void Close();
-        protected abstract void SendData(string message);
 
         public void SetDebugLevel(DebugLevel lvl)
         {
@@ -113,16 +112,16 @@ namespace AscomIntegration
                 {
                     for (int msgRepeat = 0; msgRepeat < message.Repeat; msgRepeat++)
                     {
-                        message.Number = ++number;
-
                         try
                         {
+                            message.Index = ++number;
+                            Debug.WriteLineIf(_debugLevel == DebugLevel.High, DateTime.Now.ToString("HH:mm:ss") + " - [" + this.GetType().ToString() + "] Sending message: " + message.ToString());
                             Send(message);
                             Thread.Sleep(message.Delay);
                         }
                         catch (Exception ex)
                         {
-                            // log and wait 1 sec to retry
+                            // log and wait 5secs to retry
                             StringBuilder sb = new StringBuilder();
                             sb.Append("Message Send Failed (");
                             sb.Append(DateTime.Now.ToString("HH:mm:ss"));

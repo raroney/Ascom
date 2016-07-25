@@ -20,7 +20,7 @@ namespace AscomTestHarness
         private static readonly TestHarness _instance = new TestHarness();
         private Queue<ConnectInterface> _integrations;
         private DebugLevel _debugLevel;
-        private static bool _running = false;
+        //private static bool _running = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -35,19 +35,19 @@ namespace AscomTestHarness
             get { return _instance; }
         }
 
-        public bool Running
-        {
-            get { return _running; }
+        //public bool Running
+        //{
+        //    get { return _running; }
 
-            private set
-            {
-                if (_running != value)
-                {
-                    _running = value;
-                    OnPropertyChanged("Running");
-                }
-            }
-        }
+        //    private set
+        //    {
+        //        if (_running != value)
+        //        {
+        //            _running = value;
+        //            OnPropertyChanged("Running");
+        //        }
+        //    }
+        //}
 
         public object LogLevel { get; set; }
 
@@ -133,9 +133,9 @@ namespace AscomTestHarness
             str.Append(DateTime.Now.ToString());
             Debug.WriteLine(str.ToString());
 
-            Running = true;
+            //Running = true;
             Parallel.ForEach(_integrations, integration => integration.SendAllMessages());
-            Running = false;
+            //Running = false;
 
             str.Clear();
             str.Append(_name);
@@ -144,6 +144,27 @@ namespace AscomTestHarness
             Debug.WriteLine(str.ToString());
             Debug.Flush();
         }
+
+
+        //public void RunScript(object sender, DoWorkEventArgs e)
+        //{
+        //    StringBuilder str = new StringBuilder();
+        //    str.Append(_name);
+        //    str.Append(" Started at: ");
+        //    str.Append(DateTime.Now.ToString());
+        //    Debug.WriteLine(str.ToString());
+
+        //    //Running = true;
+        //    Parallel.ForEach(_integrations, integration => integration.SendAllMessages());
+        //    //Running = false;
+
+        //    str.Clear();
+        //    str.Append(_name);
+        //    str.Append(" Ended at: ");
+        //    str.Append(DateTime.Now.ToString());
+        //    Debug.WriteLine(str.ToString());
+        //    Debug.Flush();
+        //}
 
         // Create the OnPropertyChanged method to raise the event
         protected void OnPropertyChanged(string name)

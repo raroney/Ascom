@@ -5,66 +5,55 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace AscomIntegration
 {
-    public class SMTPInterface : ConnectInterface, IDisposable
+    public class SMTPInterface : ConnectInterface//, IDisposable
     {
-        private SmtpClient _client;
-        private MailMessage _email;
+        //private SmtpClient _client;
+        //private MailMessage _email;
 
-        public SMTPInterface(string xml) : base(xml) { }
+        public SMTPInterface(string xml) : base(xml)
+        {
+            Connect();
+        }
 
         //public SMTPInterface(string ipAddress, int port) : base(ipAddress, port) { }
 
         public override void Send(ConnectMessage message)
         {
-            if (_client == null) Connect();
-
             MailAddress from = new MailAddress(((SMTPMessage)message).To);
             MailAddress to = new MailAddress(((SMTPMessage)message).From);
-            _email = new MailMessage(from, to);
-            _email.Body = message.ToString();
-            _email.Subject = ((SMTPMessage)message).Subject;
-            Debug.WriteLineIf(_debugLevel == DebugLevel.High, "Sending email with subject: " + _email.Subject);
-            _numMessages++;
-            SendData(message.ToString());
-            Close();
+
+            using (MailMessage email = new MailMessage(from, to))
+            {
+                email.Body = message.ToString();
+                email.Subject = ((SMTPMessage)message).Subject;
+                _numMessages++;
+
+                using (SmtpClient client = new SmtpClient(_address, _port))
+                {
+                    try
+                    {
+                        client.Send(email);
+                    }
+                    catch (ArgumentNullException e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e.ToString(), "ArgumentNullException");
+                        _numFails++;
+                    }
+                    catch (SmtpException e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e.ToString(), "SmtpException");
+                        _numFails++;
+                    }
+                }
+            }
         }
 
-        protected override void Connect()
-        {
-            _client = new SmtpClient(_address, _port);
-        }
+        protected override void Connect() { }
 
         protected override void Close() { } // no smtp close
-
-
-        protected override void SendData(string message)
-        {
-            try
-            {
-                // Send the message to the connected TcpServer. 
-                _client.Send(_email);
-                _email.Dispose();
-                _numSends++;
-            }
-            catch (ArgumentNullException e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString(), "ArgumentNullException");
-                _numFails++;
-            }
-            catch (SmtpException e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString(), "SmtpException");
-                _numFails++;
-            }
-        }
-
-        public void Dispose()
-        {
-            _email.Dispose();
-            _client.Dispose();
-        }
     }
 }

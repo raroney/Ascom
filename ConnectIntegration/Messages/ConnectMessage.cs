@@ -14,7 +14,7 @@ namespace AscomIntegration
         private const string TIME_PLACEHOLDER = "||time||";
 
         protected string _body;
-        private int _number = 0;
+        private int _index = 0;
 
         public ConnectMessage(string xml)
         {
@@ -25,28 +25,20 @@ namespace AscomIntegration
         public string Body
         {
             get { return _body; }
-            //set { _body = value; }
         }
 
-        public int Number
+        internal int Index
         {
-            get
-            {
-                return _number;
-            }
-
-            set
-            {
-                _number = value;
-            }
+            set { _index = value; }
         }
 
         public override string ToString()
         {
-            _body = _body.Replace(NUMBER_PLACEHOLDER, Number.ToString());
-            _body = _body.Replace(TIME_PLACEHOLDER, DateTime.Now.ToString("HH:mm:ss"));
+            StringBuilder str = new StringBuilder(_body);
+            str.Replace(NUMBER_PLACEHOLDER, _index.ToString());
+            str.Replace(TIME_PLACEHOLDER, DateTime.Now.ToString("HH:mm:ss"));
 
-            return _body;
+            return str.ToString();
         }
     }
 }
